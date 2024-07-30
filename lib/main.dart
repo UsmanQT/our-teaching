@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ourteaching/Components/SearchBar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,11 +28,32 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  List<String> items = ["Apple", "Banana", "Orange", "Grapes"];
+  List<String> filteredItems = [];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredItems = items;
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      filteredItems = items
+          .where((item) => item.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -41,12 +63,22 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-          ],
-        ),
+      body: Column(
+        children: <Widget>[
+          SearchBarComponent(
+            onSearchChanged: _onSearchChanged,
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filteredItems.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(filteredItems[index]),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
